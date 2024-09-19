@@ -17,7 +17,7 @@
 
   import { InvoiceForm, InvoiceView } from "./invoice";
   import { getInitialFormData, prepareRequestParams } from "./utils";
-  import type { RequestNetwork } from "@requestnetwork/request-client.js";
+  import { RequestNetwork, Types } from "@requestnetwork/request-client.js";
 
   export let config: IConfig;
   export let signer: string = "";
@@ -139,12 +139,25 @@
     if (requestNetwork) {
       try {
         addToStatus(APP_STATUS.PERSISTING_TO_IPFS);
-        const request = await requestNetwork.createRequest({
+        // const request = await requestNetwork.createRequest({
+        //   requestInfo: requestCreateParameters.requestInfo,
+        //   paymentNetwork: requestCreateParameters.paymentNetwork,
+        //   contentData: requestCreateParameters.contentData,
+        //   signer: requestCreateParameters.signer,
+        // });
+        console.log('Create ENCRYPTED request!');
+        const request = await requestNetwork._createEncryptedRequest({
           requestInfo: requestCreateParameters.requestInfo,
           paymentNetwork: requestCreateParameters.paymentNetwork,
           contentData: requestCreateParameters.contentData,
           signer: requestCreateParameters.signer,
-        });
+        }, [
+          {
+            method: Types.Encryption.METHOD.ECIES,
+            key: "0x0466550c2ecfdedd728770b0e37899e8b74d400199e9b651a9adf8c1e3911329024714f818659228d002244cf2cd5a55ff8e7e03937b69a79daadc5bb060c0bd9d"
+          }
+        ]);
+
 
         activeRequest = request;
         addToStatus(APP_STATUS.PERSISTING_ON_CHAIN);
