@@ -111,6 +111,24 @@
     formData.items = [...formData.items, newItem];
   };
 
+
+
+
+  const addEncryptionKey = () => {
+    formData.encryptionKeys = [...formData.encryptionKeys, ""];
+  };
+  const handleEncryptionKeyInput = (event: Event, index: number) => {
+    const target = event.target as HTMLInputElement;
+
+    formData.encryptionKeys[index] = target.value;
+  };
+  const removeEncryptionKey = (index: number) => {
+    formData.encryptionKeys = formData.encryptionKeys.filter((_, i) => i !== index);
+  };
+
+
+
+
   const removeInvoiceItem = (index: number) => {
     formData.items = formData.items.filter((_, i) => i !== index);
   };
@@ -339,6 +357,41 @@
         {#if payeeAddressError}
           <p class="error-address">Please enter a valid Ethereum address</p>
         {/if}
+
+
+
+        <div class="invoice-form-section">
+          <p>Encryption Keys</p>
+          {#each formData.encryptionKeys as key, index (index)}
+            <div class="encryption-key-input">
+              <Input
+                id={`encryptionKey-${index}`}
+                type="text"
+                value={key}
+                placeholder="Enter encryption key"
+                handleInput={(event) => handleEncryptionKeyInput(event, index)}
+              />
+              <Button
+                    padding="10px"
+                    type="button"
+                    onClick={() => removeEncryptionKey(index)}
+                  >
+                <div slot="icon" style="padding: 7px;">
+                  <Trash />
+                </div>
+              </Button>
+            </div>
+          {/each}
+
+          <Button text="Add encryption key" type="button" onClick={addEncryptionKey}>
+            <div slot="icon">
+              <Plus />
+            </div>
+          </Button>
+        </div>
+
+
+        
       </div>
     </div>
     <div class="invoice-form-dates">
@@ -722,5 +775,10 @@
     ) {
     width: 12px;
     height: 12px;
+  }
+  .encryption-key-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
 </style>

@@ -24,6 +24,7 @@ export interface CustomFormData {
   items: InvoiceItem[];
   buyerInfo?: SellerBuyerInfo;
   sellerInfo?: SellerBuyerInfo;
+  encryptionKeys: string[];
 }
 
 export interface SellerBuyerInfo {

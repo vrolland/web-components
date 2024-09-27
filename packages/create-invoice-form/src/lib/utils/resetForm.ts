@@ -24,6 +24,7 @@ export function getInitialFormData() {
         },
       },
     ],
+    encryptionKeys: [""],
     sellerInfo: {
       firstName: "",
       lastName: "",
