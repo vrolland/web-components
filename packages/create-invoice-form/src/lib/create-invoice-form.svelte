@@ -18,11 +18,11 @@
   import { InvoiceForm, InvoiceView } from "./invoice";
   import { getInitialFormData, prepareRequestParams } from "./utils";
   import { RequestNetwork, Types } from "@requestnetwork/request-client.js";
-    import { Encryption } from "@requestnetwork/request-client.js/dist/types";
 
   export let config: IConfig;
   export let signer: string = "";
   export let requestNetwork: RequestNetwork | null | undefined;
+  export let decryptionProvider: any | null | undefined;
   export let currencies: any;
 
   let isTimeout = false;
@@ -151,12 +151,12 @@
           key: key
         }));
         // TODO
-        encryptionParams.push(
-          {
-            method: Types.Encryption.METHOD.ECIES,
-            key: "0x0466550c2ecfdedd728770b0e37899e8b74d400199e9b651a9adf8c1e3911329024714f818659228d002244cf2cd5a55ff8e7e03937b69a79daadc5bb060c0bd9d"
-          }
-        )
+        // encryptionParams.push(
+        //   {
+        //     method: Types.Encryption.METHOD.ECIES,
+        //     key: "0x0466550c2ecfdedd728770b0e37899e8b74d400199e9b651a9adf8c1e3911329024714f818659228d002244cf2cd5a55ff8e7e03937b69a79daadc5bb060c0bd9d"
+        //   }
+        // )
         console.log('Create ENCRYPTED request!');
         console.log(encryptionParams)
         const request = await requestNetwork._createEncryptedRequest({
@@ -182,6 +182,30 @@
       }
     }
   };
+
+  // const getFirstEncryptionParameters = async () => {
+  //   if(decryptionProvider) {
+  //     const encryptionKey = await decryptionProvider.invokeSnap({ method: 'chooseEncryptionParameters', params: {} });
+  //     return encryptionKey;
+  //   }
+  //   return '';
+  // };
+  
+  const changeIdentity = async () => {
+    if(decryptionProvider) {
+      const identityAddress = await decryptionProvider.invokeSnap({ method: 'chooseSigningIdentity', params: {} });
+      return identityAddress;
+    }
+    return '';
+  };
+
+  const changeFirstEncryptionParameters = async () => {
+    if(decryptionProvider) {
+      const encryptionKey = await decryptionProvider.invokeSnap({ method: 'chooseEncryptionParameters', params: {} });
+      return encryptionKey;
+    }
+    return '';
+  };
 </script>
 
 <div
@@ -198,6 +222,8 @@
       {handleCurrencyChange}
       {handleNetworkChange}
       {networks}
+      {changeFirstEncryptionParameters}
+      {changeIdentity}
     />
     <div class="invoice-view-wrapper">
       <InvoiceView

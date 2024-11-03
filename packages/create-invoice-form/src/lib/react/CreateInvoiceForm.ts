@@ -5,6 +5,7 @@ export interface CreateInvoiceFormProps {
   config: IConfig;
   signer: string;
   requestNetwork: RequestNetwork | null | undefined;
+  decryptionProvider: any | null | undefined;
   currencies: {
     symbol: string;
     address: string;

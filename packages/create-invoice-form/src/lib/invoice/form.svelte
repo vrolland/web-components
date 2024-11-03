@@ -9,6 +9,7 @@
   // Icons
   import Trash from "@requestnetwork/shared-icons/trash.svelte";
   import Plus from "@requestnetwork/shared-icons/plus.svelte";
+  import Exchange from "@requestnetwork/shared-icons/exchange.svelte";
 
   // Types
   import type { IConfig, CustomFormData } from "@requestnetwork/shared-types";
@@ -23,16 +24,26 @@
   export let formData: CustomFormData;
   export let handleCurrencyChange: (value: string) => void;
 
+  export let changeIdentity: () => Promise<string>;
+  export let changeFirstEncryptionParameters: () => Promise<string>;
+    
+
   export let handleNetworkChange: (chainId: string) => void;
   export let networks;
   export let defaultCurrencies: any = [];
   export let payeeAddressError = false;
   export let clientAddressError = false;
 
+  // TODO USE IT TO GET the first encryption key beore the form is show
+  // const getFirstEncryptionKey = async () => {
+  //   const encryptionKey = await changeFirstEncryptionParameters();
+  //   formData.encryptionKeys[0] = encryptionKey;
+  // };
+
   let creatorId = "";
 
-  $: {
-    creatorId = formData.creatorId;
+   $: {
+    // creatorId = formData.creatorId;
   }
 
   const checkPayeeAddress = () => {
@@ -112,7 +123,20 @@
   };
 
 
+  
 
+  const changeIdentityHandler = async () => {
+    console.log("creatorId", creatorId, formData.creatorId);
+    const identityAddress = await changeIdentity();
+    formData.creatorId = identityAddress;
+    creatorId = identityAddress;
+    console.log("creatorId", creatorId, formData.creatorId);
+  };
+
+  const changeFirstEncryptionKey = async () => {
+    const encryptionKey = await changeFirstEncryptionParameters();
+    formData.encryptionKeys[0] = encryptionKey;
+  };
 
   const addEncryptionKey = () => {
     formData.encryptionKeys = [...formData.encryptionKeys, ""];
@@ -156,10 +180,20 @@
             disabled
             id="creatorId"
             type="text"
-            value={creatorId}
+            value={formData.creatorId}
             label="From"
             placeholder="Connect wallet to populate"
           />
+          <Button
+              padding="10px"
+              type="button"
+              onClick={async () => changeIdentityHandler()}
+            >
+              <div slot="icon" style="padding: 7px;">
+                <Exchange />
+              </div>
+          </Button>
+
           <Accordion title="Add Your Info">
             <div class="invoice-form-info">
               <Input
@@ -361,7 +395,8 @@
 
 
         <div class="invoice-form-section">
-          <p>Encryption Keys</p>
+          <p>Encryption Keys</p>  
+
           {#each formData.encryptionKeys as key, index (index)}
             <div class="encryption-key-input">
               <Input
@@ -370,16 +405,30 @@
                 value={key}
                 placeholder="Enter encryption key"
                 handleInput={(event) => handleEncryptionKeyInput(event, index)}
+                disabled={index == 0}
               />
-              <Button
-                    padding="10px"
-                    type="button"
-                    onClick={() => removeEncryptionKey(index)}
-                  >
-                <div slot="icon" style="padding: 7px;">
-                  <Trash />
-                </div>
+              
+              {#if index !== 0}
+                <Button
+                      padding="10px"
+                      type="button"
+                      onClick={() => removeEncryptionKey(index)}
+                    >
+                  <div slot="icon" style="padding: 7px;">
+                    <Trash />
+                  </div>
+                </Button>
+              {:else}
+                <Button
+                  padding="10px"
+                  type="button"
+                  onClick={async () => changeFirstEncryptionKey()}
+                >
+                  <div slot="icon" style="padding: 7px;">
+                    <Exchange />
+                  </div>
               </Button>
+              {/if}
             </div>
           {/each}
 

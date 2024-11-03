@@ -4,8 +4,9 @@
   export let config;
   export let signer = "";
   export let requestNetwork = null;
+  export let decryptionProvider = null;
 </script>
 
 <div class="container m-auto w-full">
-  <CreateInvoiceForm {config} {signer} {requestNetwork} />
+  <CreateInvoiceForm {config} {signer} {requestNetwork} {decryptionProvider} />
 </div>

@@ -9,4 +9,5 @@ declare interface Window {
 class CreateInvoiceForm extends SvelteComponentTyped<{
   signer: string;
   requestNetwork: RequestNetwork | null | undefined;
+  decryptionProvider: any | null | undefined;
 }> {}
